@@ -21,9 +21,9 @@ function App() {
   //read todo from firebase
   useEffect(() => {
     const q = query(collection(db, "todos"));
-    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let todosArr = [];
-      QuerySnapshot.forEach((doc) => {
+      querySnapshot.forEach((doc) => {
         todosArr.push({ ...doc.data(), id: doc.id });
       });
       setTodos(todosArr);
@@ -46,7 +46,7 @@ function App() {
         </form>
         <ul>
           {todos.map((todo, index) => (
-            <Todo key={index} todo={todo.text} />
+            <Todo key={index} todo={todo} />
           ))}
         </ul>
         <p className={style.count}>U have 2 todos</p>
