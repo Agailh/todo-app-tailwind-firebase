@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import Todo from "./Todo";
+import { db } from "./firebase";
+
+import { onSnapshot, query, collection } from "firebase/firestore";
 
 const style = {
   bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#2f80ed] to-[#1cb5e0]`,
@@ -12,7 +15,24 @@ const style = {
   count: `text-center font-bold p-2`,
 };
 function App() {
-  const [todos, setTodos] = useState(["learn react", "grind"]);
+  const [todos, setTodos] = useState([]);
+
+  //create todo
+  //read todo from firebase
+  useEffect(() => {
+    const q = query(collection(db, "todos"));
+    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+      let todosArr = [];
+      QuerySnapshot.forEach((doc) => {
+        todosArr.push({ ...doc.data(), id: doc.id });
+      });
+      setTodos(todosArr);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  //update
+  //delete in firebase
 
   return (
     <div className={style.bg}>
@@ -26,7 +46,7 @@ function App() {
         </form>
         <ul>
           {todos.map((todo, index) => (
-            <Todo key={index} todo={todo} />
+            <Todo key={index} todo={todo.text} />
           ))}
         </ul>
         <p className={style.count}>U have 2 todos</p>
